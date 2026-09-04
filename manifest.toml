@@ -10,6 +10,7 @@ packages = [
   { name = "alpacki", version = "3.0.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "alpacki", source = "hex", outer_checksum = "5BCB617A9606E56018790D4F24AB1E06B6D05BC17ACD6686B99E8D4D18B1F5FD" },
   { name = "argv", version = "1.1.0", build_tools = ["gleam"], requirements = [], otp_app = "argv", source = "hex", outer_checksum = "3277D100448BDB4A29B6D58C0F36F631CBC349E8BDD09766C6309DF202831140" },
   { name = "booklet", version = "1.1.0", build_tools = ["gleam"], requirements = [], otp_app = "booklet", source = "hex", outer_checksum = "08E0FDB78DC4D8A5D3C80295B021505C7D2A2E7B6C6D5EAB7286C36F4A53C851" },
+  { name = "child_process", version = "2.1.2", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_otp", "gleam_stdlib", "splitter"], otp_app = "child_process", source = "hex", outer_checksum = "ED9C4751B92D039158E9C7344525F46FE1D68FF19787B282055FF1E67DF9DE56" },
   { name = "contour", version = "1.2.1", build_tools = ["gleam"], requirements = ["gleam_community_ansi", "gleam_stdlib", "glexer", "houdini"], otp_app = "contour", source = "hex", outer_checksum = "C7895472BBAAC5D15DBDBAF6DD1847F6981F2F6132F726BAD30434A6E3BAAB95" },
   { name = "directories", version = "1.2.0", build_tools = ["gleam"], requirements = ["envoy", "gleam_stdlib", "platform", "simplifile"], otp_app = "directories", source = "hex", outer_checksum = "D13090CFCDF6759B87217E8DDD73A75903A700148A82C1D33799F333E249BF9E" },
   { name = "envoy", version = "1.2.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "envoy", source = "hex", outer_checksum = "9C6FBB6BFA02A52798BEEC5977A738CAD6E4A057F4B67FD0C8061AD2502C191A" },
@@ -55,6 +56,7 @@ packages = [
 
 [requirements]
 booklet = { version = ">= 1.1.0 and < 2.0.0" }
+child_process = { version = ">= 2.1.2 and < 3.0.0" }
 contour = { version = ">= 1.2.1 and < 2.0.0" }
 ewe = { version = ">= 6.0.0 and < 7.0.0" }
 filepath = { version = ">= 1.1.2 and < 2.0.0" }

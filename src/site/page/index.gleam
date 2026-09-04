@@ -15,18 +15,19 @@ import site/ui/icon
 
 // META ------------------------------------------------------------------------
 
-pub const meta = Meta(
-  title: "Lustre, the universal framework.",
-  description: "",
-  author: [page.hayleigh],
-  head: [
-    Stylesheet(href: "/css/page/index.css"),
-  ],
-  content: [
-    "index#highlights",
-    "index#snippet",
-  ],
-)
+pub const meta =
+  Meta(
+    title: "Lustre, the universal framework.",
+    description: "",
+    author: [page.hayleigh],
+    head: [
+      Stylesheet(href: "/css/page/index.css"),
+    ],
+    content: [
+      "index#highlights",
+      "index#snippet",
+    ],
+  )
 
 // VIEW ------------------------------------------------------------------------
 

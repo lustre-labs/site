@@ -1,6 +1,8 @@
 // IMPORTS ---------------------------------------------------------------------
 
 import booklet.{type Booklet}
+import child_process
+import child_process/stdio
 import ewe
 import filepath
 import gleam/bool
@@ -9,6 +11,7 @@ import gleam/dict.{type Dict}
 import gleam/erlang/process.{type Name}
 import gleam/http/request.{type Request, Request}
 import gleam/http/response.{type Response}
+import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/otp/static_supervisor
@@ -36,6 +39,7 @@ pub fn main() -> Nil {
     |> static_supervisor.add(create_registry(registry))
     |> static_supervisor.add(watch_assets(registry))
     |> static_supervisor.add(watch_content(registry, content))
+    |> static_supervisor.add(watch_source(registry))
     |> static_supervisor.add(serve_site(registry, content))
     |> static_supervisor.start
 
@@ -92,6 +96,42 @@ fn watch_content(
   })
   |> polly.supervised
 }
+
+fn watch_source(
+  registry: Name(group_registry.Message(String)),
+) -> ChildSpecification(Watcher) {
+  polly.new()
+  |> polly.interval(100)
+  |> polly.add_dir("src")
+  |> polly.add_callback(fn(_) {
+    let result =
+      child_process.from_name("gleam")
+      |> child_process.arg("build")
+      |> child_process.run(mode: stdio.capture(True))
+
+    case result {
+      Error(error) ->
+        io.println_error(child_process.describe_start_error(error))
+      Ok(child_process.Output(status_code: 0, ..)) -> {
+        case reload_modified_modules() {
+          Error(error) -> io.println_error(error)
+          Ok(Nil) -> {
+            let registry = group_registry.get_registry(registry)
+            let subscribers = group_registry.members(registry, "source")
+            use subscriber <- list.each(subscribers)
+
+            process.send(subscriber, "")
+          }
+        }
+      }
+      Ok(child_process.Output(output:, ..)) -> io.println_error(output)
+    }
+  })
+  |> polly.supervised
+}
+
+@external(erlang, "serve_ffi", "reload_modified_modules")
+fn reload_modified_modules() -> Result(Nil, String)
 
 // WEB SERVER ------------------------------------------------------------------
 
@@ -254,6 +294,7 @@ fn serve_sse(
     selector
     |> process.merge_selector(on_asset_change(registry, self))
     |> process.merge_selector(on_content_change(registry, self, content, route))
+    |> process.merge_selector(on_source_change(registry, self, content, route))
 
   #(Nil, selector)
 }
@@ -270,6 +311,23 @@ fn on_asset_change(
   |> Some
 }
 
+fn on_source_change(
+  registry: GroupRegistry(String),
+  self: process.Pid,
+  content: Booklet(Dict(String, Document)),
+  route: Result(Route, Nil),
+) -> process.Selector(Option(ewe.SseEvent)) {
+  case route {
+    Error(_) -> process.new_selector()
+    Ok(route) -> {
+      let subject = group_registry.join(registry, "source", self)
+      use _ <- process.select_map(process.new_selector(), subject)
+
+      content_changed(route, booklet.get(content))
+    }
+  }
+}
+
 fn on_content_change(
   registry: GroupRegistry(String),
   self: process.Pid,
@@ -279,19 +337,25 @@ fn on_content_change(
   case route {
     Error(_) -> process.new_selector()
     Ok(route) -> {
-      let meta = route.to_meta(route, booklet.get(content))
       let subject = group_registry.join(registry, "content", self)
       use path <- process.select_map(process.new_selector(), subject)
+      let documents = booklet.get(content)
+      let meta = route.to_meta(route, documents)
       use <- bool.guard(!list.contains(meta.content, path), None)
 
-      let html =
-        route
-        |> route.to_content(booklet.get(content))
-        |> element.to_string
-
-      ewe.event(html)
-      |> ewe.event_name("content-change")
-      |> Some
+      content_changed(route, documents)
     }
   }
+}
+
+fn content_changed(
+  route: Route,
+  documents: Dict(String, Document),
+) -> Option(ewe.SseEvent) {
+  route
+  |> route.to_content(documents)
+  |> element.to_string
+  |> ewe.event
+  |> ewe.event_name("content-change")
+  |> Some
 }

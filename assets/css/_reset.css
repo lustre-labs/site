@@ -1,0 +1,62 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  hanging-punctuation: first allow-end last;
+}
+
+body {
+  margin: 0;
+  font-size: var(--size-text);
+  line-height: round(var(--size-text) * 1.7, var(--size-gap));
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+  font-weight: 500;
+}
+
+a {
+  text-underline-offset: 4px;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+pre {
+  overflow-x: auto;
+  line-height: round(var(--size-text) * 1.4, var(--size-gap));
+}
+
+ul,
+ol,
+dl {
+  list-style-position: inside;
+
+  ul,
+  ol,
+  dl {
+    padding-inline-start: 1lh;
+  }
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}

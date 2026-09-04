@@ -1,0 +1,59 @@
+#page-article {
+  max-width: var(--content-container-width);
+  margin-inline: auto;
+  margin-block-start: calc(var(--size-gap) * 8);
+  margin-block-end: round(18vh, var(--size-gap));
+
+  & > * {
+    padding-inline: var(--content-container-padding);
+    margin-block-start: calc(var(--size-gap) * 8);
+    min-width: 0;
+    max-width: var(--content-prose-width);
+  }
+
+  & > figure {
+    max-width: var(--content-container-width);
+    padding: round(2vw, var(--size-gap));
+    border-radius: var(--size-radius);
+    border: 2px dashed var(--surface-auxiliary-border);
+    background: var(--surface-auxiliary-background);
+    min-width: 0;
+    overflow: hidden;
+
+    & figcaption {
+      border-block-start: 1px solid var(--surface-auxiliary-border);
+      margin-block-start: round(2vw, var(--size-gap));
+      padding-block-start: calc(var(--size-gap) * 2);
+      font-family: var(--font-caveat);
+      font-size: 1.3em;
+      color: var(--surface-secondary-text);
+
+      & code {
+        font-family: var(--font-caveat);
+
+        &::before,
+        &::after {
+          content: "`";
+        }
+      }
+    }
+  }
+
+  & :is(h2, h3, h4, h5, h6) {
+    margin-block-start: calc(var(--size-gap) * 8);
+
+    & code {
+      font-size: 0.8em !important;
+    }
+  }
+
+  & hr {
+    border: none;
+    border-block-start: 1px solid var(--surface-auxiliary-border);
+  }
+
+  & > .actions {
+    max-width: var(--content-container-width);
+    padding: 0;
+  }
+}

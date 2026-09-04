@@ -1,0 +1,27 @@
+.divider {
+  height: calc(var(--size-gap) * 2);
+  margin-block: calc(var(--size-gap) * 12);
+  background-repeat: repeat;
+
+  &:nth-of-type(even) {
+    background-size: 12px 12px;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--surface-auxiliary-border) 0,
+      var(--surface-auxiliary-border) 1px,
+      transparent 0,
+      transparent 50%
+    );
+  }
+
+  &:nth-of-type(odd) {
+    background-size: 12px 12px;
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--surface-auxiliary-border) 0,
+      var(--surface-auxiliary-border) 1px,
+      transparent 0,
+      transparent 50%
+    );
+  }
+}

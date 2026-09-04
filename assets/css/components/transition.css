@@ -1,0 +1,17 @@
+.transition-enter {
+  opacity: 1;
+  transform: translateX(0px) translateY(0px);
+  filter: blur(0px);
+  transition-property: opacity, transform, filter;
+  transition-duration: var(--duration, 0.125);
+  transition-timing-function: ease-in-out;
+  transition-delay: calc(var(--offset, 0) * var(--duration, 0.125) / 2.5);
+
+  @media (prefers-reduced-motion: no-preference) {
+    @starting-style {
+      opacity: 0;
+      transform: translateX(-1px) translateY(1px);
+      filter: blur(4px);
+    }
+  }
+}

@@ -1,0 +1,207 @@
+:root {
+  color-scheme: light dark;
+
+  /* PRIMITIVE TOKENS ------------------------------------------------------- */
+  /* Primitive tokens are fundamental values from which the rest of the design
+  can be derived from. These are the base "variables" that just constrain the
+  number of options we have to choose from for any particular thing.
+  */
+
+  --colour-blue-050: #f4f2fc;
+  --colour-blue-100: #e8e5f9;
+  --colour-blue-200: #cdc7f1;
+  --colour-blue-400: #aca1e7;
+  --colour-blue-600: #553fcf;
+  --colour-blue-800: #3a28a1;
+  --colour-blue-900: #181143;
+  --colour-blue-950: #0f0b2a;
+
+  --colour-orange-050: #fff1eb;
+  --colour-orange-100: #ffe1d5;
+  --colour-orange-200: #ffbda0;
+  --colour-orange-400: #ff8a58;
+  --colour-orange-600: #a33100;
+  --colour-orange-800: #752300;
+  --colour-orange-900: #310f00;
+  --colour-orange-950: #1f0900;
+
+  --colour-pink-050: #ffeffc;
+  --colour-pink-100: #ffddfa;
+  --colour-pink-200: #feb3f3;
+  --colour-pink-400: #fe76e9;
+  --colour-pink-600: #a6018c;
+  --colour-pink-800: #780166;
+  --colour-pink-900: #36002e;
+  --colour-pink-950: #25001f;
+
+  --colour-red-050: #fff8fa;
+  --colour-red-100: #fee8ef;
+  --colour-red-200: #fcbace;
+  --colour-red-300: #fcbace;
+  --colour-red-400: #f986a9;
+  --colour-red-500: #f986a9;
+  --colour-red-600: #b2093d;
+  --colour-red-700: #b2093d;
+  --colour-red-800: #81062c;
+  --colour-red-900: #3a0314;
+  --colour-red-950: #27020d;
+
+  --colour-grey-050: #faf9f9;
+  --colour-grey-100: #efedeb;
+  --colour-grey-200: #d0cbc4;
+  --colour-grey-400: #b2a89e;
+  --colour-grey-600: #61584d;
+  --colour-grey-800: #453e37;
+  --colour-grey-900: #1c1916;
+  --colour-grey-950: #110f0e;
+
+  --font-neuton: "Neuton", Georgia, serif;
+  --font-space-grotesk: "Space Grotesk", system-ui, sans-serif;
+  --font-space-mono: "Space Mono", monospace;
+  --font-caveat: "Caveat", cursive;
+
+  --size-gap: 0.25rem;
+  --size-radius: 4px;
+  --size-text: 1rem;
+
+  /* SEMANTIC TOKENS -------------------------------------------------------- */
+  /* Semantic tokens imbue meaning to our primitive tokens by associating with
+  the user's experience of the interface. Tokens follow a strict naming scheme:
+
+    --{intent}-{priority}-{property}
+
+  Where:
+
+  - `intent` is the meaning the user is supposed to associate with the token or
+    the purpose it serves in the interface. For example a "surface" is a container
+    that holds content, or an "action" represents controls the user can interact
+    with.
+
+  - `priority` is the importance of the token in the interface. Primary tokens
+    represent the most important elements in the interface (of which there should
+    not be many), while secondary tokens are the most abundant and auxiliary
+    tokens have a more supportive role in the interface.
+
+  - `property` is the fundamental style property the token represents. This
+    doesn't have to match a CSS property 1:1 but it should represent the perceived
+    effect the token has on the user. For example, a "background" token represents
+    the background colour of an element.
+
+  */
+
+  --surface-primary-background: light-dark(white, var(--colour-grey-950));
+  --surface-primary-text: light-dark(
+    var(--colour-blue-950),
+    var(--colour-blue-100)
+  );
+  --surface-secondary-background: light-dark(
+    var(--colour-grey-050),
+    var(--colour-grey-900)
+  );
+  --surface-secondary-text: light-dark(
+    var(--colour-grey-600),
+    var(--colour-grey-200)
+  );
+  --surface-auxiliary-background: light-dark(
+    var(--colour-grey-050),
+    var(--colour-grey-900)
+  );
+  --surface-auxiliary-border: light-dark(
+    var(--colour-grey-100),
+    var(--colour-grey-800)
+  );
+  --surface-auxiliary-text: light-dark(
+    var(--colour-grey-800),
+    var(--colour-grey-100)
+  );
+
+  --field-background: white;
+  --field-text: var(--colour-grey-950);
+
+  --control-primary-background: white;
+  --control-primary-text: var(--colour-grey-950);
+  --control-secondary-background: white;
+  --control-secondary-text: var(--colour-grey-950);
+
+  --prose-primary-text: var(--colour-blue-600);
+
+  --syntax-text: light-dark(var(--colour-grey-950), var(--colour-grey-100));
+  --syntax-comment-text: light-dark(
+    var(--colour-grey-400),
+    var(--colour-grey-600)
+  );
+  --syntax-function-text: light-dark(
+    var(--colour-blue-800),
+    var(--colour-blue-400)
+  );
+  --syntax-builtin-text: light-dark(
+    var(--colour-red-600),
+    var(--colour-red-400)
+  );
+  --syntax-literal-text: light-dark(
+    var(--colour-pink-800),
+    var(--colour-pink-200)
+  );
+  --syntax-variant-text: light-dark(
+    var(--colour-blue-600),
+    var(--colour-blue-400)
+  );
+  --syntax-module-text: light-dark(
+    var(--colour-grey-950),
+    var(--colour-grey-100)
+  );
+
+  --content-container-padding: max(4vw, round(2vw, var(--size-gap)));
+  --content-container-width: min(
+    calc(100vw - var(--content-container-padding)),
+    64rem
+  );
+
+  --content-prose-width: min(
+    calc(100vw - var(--content-container-padding)),
+    80ch
+  );
+}
+
+[data-mode~="light"] {
+  color-scheme: light;
+}
+
+[data-mode~="dark"] {
+  color-scheme: dark;
+}
+
+[data-mode~="pro"] {
+  --surface-primary-background: transparent
+    linear-gradient(
+      to bottom right,
+      var(--colour-orange-050) 0%,
+      var(--colour-pink-100) 100%
+    );
+
+  --surface-secondary-background: transparent
+    linear-gradient(
+      to bottom right,
+      var(--colour-blue-050) 0%,
+      var(--colour-pink-050) 100%
+    );
+
+  --surface-primary-text: var(--colour-orange-800);
+  --surface-auxiliary-text: var(--colour-grey-950);
+}
+
+[data-mode~="brand"] {
+  --surface-primary-background: var(--colour-blue-800);
+  --surface-auxiliary-background: var(--colour-grey-050);
+  --surface-primary-text: white;
+  --surface-secondary-text: var(--colour-blue-100);
+  --surface-auxiliary-text: var(--colour-grey-050);
+
+  --field-background: var(--colour-blue-050);
+  --field-text: var(--colour-blue-950);
+
+  --control-primary-background: var(--colour-blue-600);
+  --control-primary-text: var(--colour-blue-050);
+  --control-secondary-background: var(--colour-blue-400);
+  --control-secondary-text: var(--colour-blue-050);
+}

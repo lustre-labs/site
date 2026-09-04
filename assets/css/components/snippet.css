@@ -1,0 +1,37 @@
+.snippet {
+  & pre {
+    overflow-x: auto;
+    min-width: 0;
+    padding-block-end: 1lh;
+    margin-block-end: -1lh;
+  }
+
+  & pre code {
+    color: var(--syntax-text);
+  }
+
+  & pre code :is(.hl-comment) {
+    color: var(--syntax-comment-text);
+    font-style: italic;
+  }
+
+  & pre code .hl-function {
+    color: var(--syntax-function-text);
+  }
+
+  & pre code :is(.hl-keyword, .hl-operator) {
+    color: var(--syntax-builtin-text);
+  }
+
+  & pre code :is(.hl-string, .hl-number) {
+    color: var(--syntax-literal-text);
+  }
+
+  & pre code .hl-variant {
+    color: var(--syntax-variant-text);
+  }
+
+  & pre code .hl-module {
+    color: var(--syntax-module-text);
+  }
+}

@@ -1,24 +1,11 @@
-# site
+# lustre.build
 
-[![Package Version](https://img.shields.io/hexpm/v/site)](https://hex.pm/packages/site)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/site/)
+A number of scripts are provided in `dev/` that can be run to work on the site or
+prepare it for production:
 
-```sh
-gleam add site@1
-```
-```gleam
-import site
+- `gleam run -m site/serve` to start the development server. This watches for
+  changes to assets or djot content and performs hot replacement on pages that
+  are open.
 
-pub fn main() -> Nil {
-  // TODO: An example of the project in use
-}
-```
-
-Further documentation can be found at <https://hexdocs.pm/site>.
-
-## Development
-
-```sh
-gleam run   # Run the project
-gleam test  # Run the tests
-```
+- `gleam run -m site/build` to statically build the site's HTML pages. Not yet
+  implemented.

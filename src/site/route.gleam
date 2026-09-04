@@ -1,6 +1,7 @@
 // IMPORTS ---------------------------------------------------------------------
 
 import filepath
+import gleam/bool
 import gleam/dict.{type Dict}
 import gleam/string
 import lustre/element.{type Element}
@@ -19,6 +20,9 @@ pub type Route {
 // CONSTRUCTORS ----------------------------------------------------------------
 
 pub fn from_path(path: String) -> Result(Route, Nil) {
+  // files with a '#' symbol are fragments and not routes.
+  use <- bool.guard(string.contains(path, "#"), Error(Nil))
+
   let segments = case path {
     "/" <> rest -> filepath.split(rest)
     _ -> filepath.split(path)
@@ -46,7 +50,7 @@ pub fn to_content(
 pub fn to_filename(route: Route) -> String {
   case route {
     Index -> "index.html"
-    BlogPost(slug) -> "blog/" <> slug <> ".html"
+    BlogPost(slug) -> "blog/" <> slug <> "/index.html"
   }
 }
 

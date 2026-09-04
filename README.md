@@ -7,5 +7,5 @@ prepare it for production:
   changes to assets, djot content, and Gleam source code and performs hot
   replacement on pages that are open.
 
-- `gleam run -m site/build` to statically build the site's HTML pages. Not yet
-  implemented.
+- `gleam run -m site/build` to statically build the site's HTML pages and copy
+  assets into `dist/`.

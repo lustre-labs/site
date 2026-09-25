@@ -1,0 +1,52 @@
+name: Add new project
+description: Let us know about a product or project built using Lustre!
+title: "[Project]: "
+labels: ["project", "showcase"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tell us about a project built with Lustre that we could showcase on the website.
+
+  - type: input
+    id: project-name
+    attributes:
+      label: Project name
+      placeholder: Lustre
+    validations:
+      required: true
+
+  - type: input
+    id: project-url
+    attributes:
+      label: Project URL
+      description: Link to the live app or repository.
+      placeholder: https://github.com/lustre-labs/lustre
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Brief description
+      description: Describe the project in 1-3 sentences.
+    validations:
+      required: true
+
+  - type: textarea
+    id: image
+    attributes:
+      label: Project image
+      description: Paste an image URL or drag and drop an image here.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: project-type
+    attributes:
+      label: Project type
+      description: Choose the option that best describes how the project is available.
+      options:
+        - Commercial
+        - Open source
+        - Personal or hobby project

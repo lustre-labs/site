@@ -1,0 +1,34 @@
+name: Add new library
+description: Let us know about a new package built for Lustre.
+title: "[Package]: "
+labels: ["package", "showcase"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tell us about a project built with Lustre that we could showcase on the website.
+
+  - type: input
+    id: package-name
+    attributes:
+      label: Package name
+      placeholder: lustre_ui
+    validations:
+      required: true
+
+  - type: input
+    id: hex-url
+    attributes:
+      label: Hex URL
+      description: Link to the package information on hex.pm
+      placeholder: https://hex.pm/packages/lustre_ui
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Brief description
+      description: Describe the package in 1 or 2 sentences.
+    validations:
+      required: true

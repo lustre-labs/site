@@ -10,14 +10,14 @@
   anchor tags for navigation, native form submissions, and building out real Web
   Components.
 
-- Batteries included
-
-  It's hard to know where to start with JavaScript tooling. If you want to skip
-  npm, Lustre's own dev tools give you a zero-config bundler, development server,
-  and built-in Tailwind CSS support.
-
 - Easy to adopt
 
   Compile your Lustre app to a Web Component and drop it into your existing React
   or Vue codebase, or take your traditional server-rendered HTML and start small
   with interactive islands.
+
+- Batteries included
+
+  It's hard to know where to start with JavaScript tooling. If you want to skip
+  npm, Lustre's own dev tools give you a zero-config bundler, development server,
+  and built-in Tailwind CSS support.

@@ -1,6 +1,7 @@
 ---
 title = "Why use Gleam?"
 description = "A look at what makes Gleam such a joyful language for building modern Web applications."
+created = 2026-09-05
 author = ["hayleigh"]
 ---
 
@@ -119,13 +120,13 @@ Beyond editor tooling, Gleam takes a page out of Rust's book and has clear, help
 error and warning messages. 
 
 ::: figure
-``` terminal
+``` gleam-error
 error: Unknown record field
 
   ┌─ ./src/app.gleam:8:16
   │
-8 │ user.alias
-  │     ^^^^^^ Did you mean `name`?
+8  │ user.alias
+   │     ^^^^^^ Did you mean `name`?
 
 The value being accessed has this type:
     User
@@ -133,9 +134,9 @@ The value being accessed has this type:
 It has these fields:
     .email
     .name
-    
---------------------------------------------------------------------------------
-    
+
+---
+
 error: Inexhaustive patterns
     ┌─ ./src/app/post.gleam:55:3
     │
@@ -323,12 +324,12 @@ about Gleam and Lustre! If that's the case, here are some links to get you start
 ``` =toml
 [[actions]]
 title = "The Gleam language tour"
-subtitle = "Learn more about Gleam's syntax and features."
+subtitle = "Learn about the language and its features."
 link = "https://tour.gleam.run/table-of-contents/"
 
 [[actions]]
 title = "Lustre's quickstart guide"
-subtitle = "Get a feel for all of Lustre's core features."
+subtitle = "Get to grips with Lustre by building something small."
 link = "https://hexdocs.pm/lustre/guide/01-quickstart.html"
 ```
 :::

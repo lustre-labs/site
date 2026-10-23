@@ -1,9 +1,11 @@
 // IMPORTS ---------------------------------------------------------------------
 
 import contour
+import ernest
 import gleam/dict.{type Dict}
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/string
 import jot.{
   type Container, type Inline, BlockQuote, BulletList, Code, Codeblock, Delete,
   Div, Emphasis, Footnote, Heading, Image, Insert, Linebreak, Link, Mark,
@@ -44,6 +46,22 @@ pub fn block(element: Container) -> Element(_) {
           Some("gleam") ->
             html.pre([attribute.data("lang", "gleam")], [
               element.unsafe_raw_html("", "code", [], contour.to_html(content)),
+            ])
+
+          Some("gleam-error") ->
+            html.pre([attribute.data("lang", "gleam")], [
+              element.unsafe_raw_html("", "output", [], {
+                // TODO: ernest can't handle multiple error messages in a single
+                // input so we do this little hack to split it into separate parts.
+                string.split(content, "\n---\n")
+                |> list.map(fn(part) {
+                  case ernest.parse(part) {
+                    Ok(error) -> ernest.to_html(error)
+                    Error(_) -> content
+                  }
+                })
+                |> string.join("\n\n")
+              }),
             ])
 
           Some("terminal") | Some("discord") ->

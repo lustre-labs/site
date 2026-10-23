@@ -18,7 +18,7 @@ fn view_task_list(
 
     Failed(message) ->
       html.span([attribute.class("text-red-500")], [
-        html.text(string.concat(["Failed to load tasks: ", message])),
+        html.text("Failed to load tasks: " <> message),
       ])
 
     Ready([]) -> 

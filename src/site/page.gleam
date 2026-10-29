@@ -31,17 +31,19 @@ pub type HeadElement {
 
 // CONSTANTS -------------------------------------------------------------------
 
-pub const hayleigh = Author(
-  name: "Hayleigh Thompson",
-  img: "/img/team/hayleigh.png",
-  url: #("hayleigh.dev", "https://hayleigh.dev"),
-)
+pub const hayleigh =
+  Author(
+    name: "Hayleigh Thompson",
+    img: "/img/team/hayleigh.png",
+    url: #("hayleigh.dev", "https://hayleigh.dev"),
+  )
 
-pub const rebecca = Author(
-  name: "Rebecca Reusch",
-  img: "/img/team/rebecca.png",
-  url: #("becca.monster", "https://becca.monster"),
-)
+pub const rebecca =
+  Author(
+    name: "Rebecca Reusch",
+    img: "/img/team/rebecca.png",
+    url: #("becca.monster", "https://becca.monster"),
+  )
 
 // CONSTRUCTORS ----------------------------------------------------------------
 
@@ -55,12 +57,23 @@ pub fn author(name: String) -> Result(Author, Nil) {
 
 // CONVERSIONS -----------------------------------------------------------------
 
-const google_fonts = "https://fonts.googleapis.com/css2"
+const google_fonts =
+  "https://fonts.googleapis.com/css2"
   <> "?family=Neuton:ital,wght@0,200;0,300;0,400;0,700;0,800;1,400"
   <> "&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700"
-  <> "&family=Space+Grotesk:wght@300..700"
+  // <> "&family=Space+Grotesk:wght@300..700"
   <> "&family=Caveat:wght@400..700"
+  <> "&family=Work+Sans:ital,wght@0,100..900;1,100..900"
   <> "&display=swap"
+
+const neuton =
+  "https://fonts.gstatic.com/s/neuton/v24/UMBTrPtMoH62xUZCz4g6UCj1Bg.woff2"
+
+const work_sans =
+  "https://fonts.gstatic.com/s/worksans/v24/QGYqz_wNahGAdqQ43Rh_eZDrv_1i4_D2.woff2"
+
+const caveat =
+  "https://fonts.gstatic.com/s/caveat/v23/Wnz6HAc5bAfYB2Q7ZjYYiAzcPA.woff2"
 
 pub fn to_html(
   meta: Meta,
@@ -87,8 +100,32 @@ pub fn to_html(
         attribute.crossorigin(""),
       ]),
 
+      html.link([
+        attribute.rel("preload"),
+        attribute.as_("font"),
+        attribute.href(neuton),
+        attribute.type_("font/woff2"),
+        attribute.crossorigin("anonymous"),
+      ]),
+
+      html.link([
+        attribute.rel("preload"),
+        attribute.as_("font"),
+        attribute.href(work_sans),
+        attribute.type_("font/woff2"),
+        attribute.crossorigin("anonymous"),
+      ]),
+
+      html.link([
+        attribute.rel("preload"),
+        attribute.as_("font"),
+        attribute.href(caveat),
+        attribute.type_("font/woff2"),
+        attribute.crossorigin("anonymous"),
+      ]),
+
       html.link([attribute.rel("stylesheet"), attribute.href(google_fonts)]),
-      html.link([attribute.rel("stylesheet"), attribute.href("/css/_base.css")]),
+      html.link([attribute.rel("stylesheet"), attribute.href("/css/base.css")]),
 
       element.fragment(
         list.map(meta.head, fn(element) {
@@ -133,7 +170,7 @@ pub fn view_empty_layout(content: List(Element(_))) -> Element(_) {
 
 fn view_github_sponsor_banner() -> Element(_) {
   html.aside(
-    [attribute.id("layout-sponsor-banner"), attribute.data("mode", "pro")],
+    [attribute.class("layout sponsor-banner"), attribute.data("mode", "pro")],
     [
       html.p([], [
         html.text("Please consider supporting the project through "),
@@ -148,7 +185,7 @@ fn view_github_sponsor_banner() -> Element(_) {
 }
 
 pub fn view_navbar() -> Element(_) {
-  html.header([attribute.id("layout-navbar")], [
+  html.header([attribute.class("layout navbar")], [
     html.div([attribute.class("inner")], [
       html.a([attribute.href("/")], [html.text("Lustre")]),
       html.nav([attribute.class("nav")], [
@@ -168,45 +205,53 @@ pub fn view_navbar() -> Element(_) {
 }
 
 fn view_footer() -> Element(_) {
-  html.footer([attribute.id("layout-footer"), attribute.data("mode", "brand")], [
-    html.div([attribute.class("inner")], [
-      // view_footer_nav(),
-      html.aside([attribute.class("footer-byline")], [
-        html.p([], [
-          html.text("Made with 💕 by Lustre Labs"),
-        ]),
-        html.p([], [
-          html.text(
-            "contact@lustre.build – Copyright © 2025 Lustre Labs BV. All
-      rights reserved.",
-          ),
+  html.footer(
+    [attribute.class("layout footer"), attribute.data("mode", "brand")],
+    [
+      html.div([attribute.class("inner")], [
+        view_footer_nav(),
+        html.aside([attribute.class("byline")], [
+          html.p([], [
+            html.text("Made with 💕 by Lustre Labs"),
+          ]),
+          html.p([], [
+            html.text(
+              "contact@lustre.build – Copyright © 2025 Lustre Labs BV. All rights reserved.",
+            ),
+          ]),
         ]),
       ]),
+    ],
+  )
+}
+
+fn view_footer_nav() -> Element(_) {
+  html.nav([], [
+    view_footer_nav_column("Lustre", [
+      #("https://github.com/lustre-labs/lustre", "GitHub"),
+      #("https://hex.pm/packages/lustre", "Hex"),
+      #("https://hexdocs.pm/lustre/index.html", "HexDocs"),
+    ]),
+
+    view_footer_nav_column("Socials", [
+      #("https://discord.gg/3zF33AfG8f", "Discord"),
+      #("https://bsky.app/profile/hayleigh.dev", "Bluesky"),
     ]),
   ])
 }
-// TODO: bring this back once we have more things to put in the footer.
-//
-// fn view_footer_nav() -> Element(_) {
-//   html.nav([attribute.class("footer-nav")], [
-//     view_footer_nav_column("Lustre", [
-//       #("https://github.com/lustre-labs/lustre", "GitHub"),
-//       #("https://hexdocs.pm/lustre/index.html", "API reference"),
-//       #("/changelog", "Changelog"),
-//     ]),
-//   ])
-// }
 
-// fn view_footer_nav_column(
-//   title: String,
-//   links: List(#(String, String)),
-// ) -> Element(_) {
-//   html.div([attribute.class("footer-nav-column")], [
-//     html.p([], [html.text(title)]),
-//     element.fragment(
-//       list.map(links, fn(link) {
-//         html.a([attribute.href(link.0)], [html.text(link.1)])
-//       }),
-//     ),
-//   ])
-// }
+fn view_footer_nav_column(
+  title: String,
+  links: List(#(String, String)),
+) -> Element(_) {
+  html.div([attribute.class("column")], [
+    html.p([], [html.text(title)]),
+    element.fragment(
+      list.map(links, fn(link) {
+        html.a([attribute.href(link.0)], [
+          html.text(link.1),
+        ])
+      }),
+    ),
+  ])
+}

@@ -56,7 +56,7 @@ pub fn view(meta: Meta, documents: Dict(String, Document)) -> Element(_) {
   page.view_empty_layout([
     view_hero(meta),
     page.view_navbar(),
-    html.div([attribute.id("page-article")], {
+    html.div([attribute.class("layout article")], {
       list.map(document.content.content, djot.block)
     }),
   ])

@@ -1,14 +1,14 @@
 // IMPORTS ---------------------------------------------------------------------
 
 import booklet.{type Booklet}
-import child_process
+import child_process.{Output}
 import child_process/stdio
-import ewe
+import ewe.{type Body, type Connection, type SocketAddress, type SseEvent, Bytes}
 import filepath
 import gleam/bool
 import gleam/bytes_tree
 import gleam/dict.{type Dict}
-import gleam/erlang/process.{type Name}
+import gleam/erlang/process.{type Name, type Pid, type Selector}
 import gleam/http/request.{type Request, Request}
 import gleam/http/response.{type Response}
 import gleam/io
@@ -17,7 +17,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/otp/static_supervisor
 import gleam/otp/supervision.{type ChildSpecification}
 import gleam/result
-import group_registry.{type GroupRegistry}
+import group_registry.{type GroupRegistry, type Message}
 import lustre/element
 import lustre/element/html
 import marceau
@@ -36,7 +36,7 @@ pub fn main() -> Nil {
 
   let assert Ok(_) =
     static_supervisor.new(static_supervisor.OneForOne)
-    |> static_supervisor.add(create_registry(registry))
+    |> static_supervisor.add(group_registry.supervised(registry))
     |> static_supervisor.add(watch_assets(registry))
     |> static_supervisor.add(watch_content(registry, content))
     |> static_supervisor.add(watch_source(registry))
@@ -46,18 +46,10 @@ pub fn main() -> Nil {
   process.sleep_forever()
 }
 
-// PUBSUB ----------------------------------------------------------------------
-
-fn create_registry(
-  registry: Name(group_registry.Message(a)),
-) -> ChildSpecification(GroupRegistry(a)) {
-  group_registry.supervised(registry)
-}
-
 // FILE WATCHERS ---------------------------------------------------------------
 
 fn watch_assets(
-  registry: Name(group_registry.Message(String)),
+  registry: Name(Message(String)),
 ) -> ChildSpecification(Watcher) {
   polly.new()
   |> polly.interval(100)
@@ -74,7 +66,7 @@ fn watch_assets(
 }
 
 fn watch_content(
-  registry: Name(group_registry.Message(String)),
+  registry: Name(Message(String)),
   content: Booklet(Dict(String, Document)),
 ) -> ChildSpecification(Watcher) {
   polly.new()
@@ -98,7 +90,7 @@ fn watch_content(
 }
 
 fn watch_source(
-  registry: Name(group_registry.Message(String)),
+  registry: Name(Message(String)),
 ) -> ChildSpecification(Watcher) {
   polly.new()
   |> polly.interval(100)
@@ -112,7 +104,7 @@ fn watch_source(
     case result {
       Error(error) ->
         io.println_error(child_process.describe_start_error(error))
-      Ok(child_process.Output(status_code: 0, ..)) -> {
+      Ok(Output(status_code: 0, ..)) -> {
         case reload_modified_modules() {
           Error(error) -> io.println_error(error)
           Ok(Nil) -> {
@@ -124,7 +116,8 @@ fn watch_source(
           }
         }
       }
-      Ok(child_process.Output(output:, ..)) -> io.println_error(output)
+
+      Ok(Output(output:, ..)) -> io.println_error(output)
     }
   })
   |> polly.supervised
@@ -136,27 +129,29 @@ fn reload_modified_modules() -> Result(Nil, String)
 // WEB SERVER ------------------------------------------------------------------
 
 fn serve_site(
-  registry: Name(group_registry.Message(String)),
+  registry: Name(Message(String)),
   content: Booklet(Dict(String, Document)),
-) -> ChildSpecification(static_supervisor.Supervisor) {
-  let listener = process.new_name("listener")
-  let pool = process.new_name("connection-pool")
-
-  ewe.new(listener, pool, fn(request: Request(_)) -> Response(_) {
+) -> ChildSpecification(SocketAddress) {
+  let server = {
+    use request <- ewe.new
     use <- serve_assets(request)
     use <- serve_pages(request, content)
     use <- serve_sse(request, registry, content)
 
-    response.set_body(
-      response.new(404),
-      ewe.Bytes(bytes_tree.from_string("not found")),
-    )
-  })
+    response.set_body(response.new(404), {
+      Bytes(bytes_tree.from_string("not found"))
+    })
+  }
+
+  server
   |> ewe.listening(1234)
   |> ewe.supervised
 }
 
-fn serve_assets(request: Request(_), next: fn() -> Response(_)) -> Response(_) {
+fn serve_assets(
+  request: Request(Connection),
+  next: fn() -> Response(Body),
+) -> Response(Body) {
   let path = filepath.join("assets", request.path)
 
   case simplifile.is_file(path) {
@@ -176,10 +171,10 @@ fn serve_assets(request: Request(_), next: fn() -> Response(_)) -> Response(_) {
 }
 
 fn serve_pages(
-  request: Request(_),
+  request: Request(Connection),
   content: Booklet(Dict(String, Document)),
-  next: fn() -> Response(_),
-) -> Response(_) {
+  next: fn() -> Response(Body),
+) -> Response(Body) {
   let request = Request(..request, path: filepath.strip_extension(request.path))
 
   case route.from_path(request.path) {
@@ -245,7 +240,7 @@ fn serve_pages(
       ]
 
       let html = page.to_html(meta, head, content)
-      let body = ewe.Bytes(bytes_tree.from_string(html))
+      let body = Bytes(bytes_tree.from_string(html))
 
       response.new(200)
       |> response.set_body(body)
@@ -259,11 +254,11 @@ fn serve_pages(
 // HOT ASSET REPLACEMENT -------------------------------------------------------
 
 fn serve_sse(
-  request: Request(_),
-  registry: Name(group_registry.Message(String)),
+  request: Request(Connection),
+  registry: Name(Message(String)),
   content: Booklet(Dict(String, Document)),
-  next: fn() -> Response(_),
-) -> Response(_) {
+  next: fn() -> Response(Body),
+) -> Response(Body) {
   use <- bool.lazy_guard(request.path != "/.dev/sse", next)
 
   let route =
@@ -271,21 +266,23 @@ fn serve_sse(
     |> result.try(list.key_find(_, "path"))
     |> result.try(route.from_path)
 
-  use _, selector <- ewe.sse(
-    response.new(200),
-    handler: fn(connection, _, message) {
-      case message {
-        Some(event) ->
-          case ewe.send_event(connection, event) {
-            Ok(_) -> ewe.continue(Nil)
-            Error(_) -> ewe.stop()
-          }
+  use _, selector <-
+    ewe.sse(
+      response.new(200),
+      on_init: _,
+      handler: fn(connection, _, message) {
+        case message {
+          Some(event) ->
+            case ewe.send_event(connection, event) {
+              Ok(_) -> ewe.continue(Nil)
+              Error(_) -> ewe.stop()
+            }
 
-        None -> ewe.continue(Nil)
-      }
-    },
-    on_close: fn(_, _) { Nil },
-  )
+          None -> ewe.continue(Nil)
+        }
+      },
+      on_close: fn(_) { Nil },
+    )
 
   let self = process.self()
   let registry = group_registry.get_registry(registry)
@@ -301,8 +298,8 @@ fn serve_sse(
 
 fn on_asset_change(
   registry: GroupRegistry(String),
-  self: process.Pid,
-) -> process.Selector(Option(ewe.SseEvent)) {
+  self: Pid,
+) -> Selector(Option(SseEvent)) {
   let subject = group_registry.join(registry, "assets", self)
   use path <- process.select_map(process.new_selector(), subject)
 
@@ -313,10 +310,10 @@ fn on_asset_change(
 
 fn on_source_change(
   registry: GroupRegistry(String),
-  self: process.Pid,
+  self: Pid,
   content: Booklet(Dict(String, Document)),
   route: Result(Route, Nil),
-) -> process.Selector(Option(ewe.SseEvent)) {
+) -> Selector(Option(SseEvent)) {
   case route {
     Error(_) -> process.new_selector()
     Ok(route) -> {
@@ -330,10 +327,10 @@ fn on_source_change(
 
 fn on_content_change(
   registry: GroupRegistry(String),
-  self: process.Pid,
+  self: Pid,
   content: Booklet(Dict(String, Document)),
   route: Result(Route, Nil),
-) -> process.Selector(Option(ewe.SseEvent)) {
+) -> Selector(Option(SseEvent)) {
   case route {
     Error(_) -> process.new_selector()
     Ok(route) -> {
@@ -351,7 +348,7 @@ fn on_content_change(
 fn content_changed(
   route: Route,
   documents: Dict(String, Document),
-) -> Option(ewe.SseEvent) {
+) -> Option(SseEvent) {
   route
   |> route.to_content(documents)
   |> element.to_string

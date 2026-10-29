@@ -1,4 +1,4 @@
-#page-article {
+.layout.article {
   max-width: var(--content-container-width);
   margin-inline: auto;
   margin-block-start: calc(var(--size-gap) * 8);
@@ -45,6 +45,10 @@
     & code {
       font-size: 0.8em !important;
     }
+  }
+
+  & :is(h3, h4, h5, h6) {
+    font-weight: 600;
   }
 
   & hr {

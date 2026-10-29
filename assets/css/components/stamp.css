@@ -1,0 +1,38 @@
+.stamp {
+  --radius: round(clamp(8px, 2vw, 16px), var(--size-gap));
+
+  position: relative;
+  border-radius: var(--size-radius);
+  background: var(--surface-secondary-background);
+  padding: var(--radius);
+  mask:
+    radial-gradient(50% 50%, #0000 65%, #fff 67%) round var(--radius)
+      var(--radius) / calc(2 * var(--radius)) calc(2 * var(--radius)),
+    conic-gradient(#000 0 0) content-box;
+  transform: rotate(-1deg);
+
+  .inner {
+    padding: calc(var(--content-container-padding) - var(--radius));
+    position: relative;
+
+    & > :is(h2, h3, h4, h5, h6) {
+      margin-block-end: calc(var(--size-gap) * 8);
+    }
+
+    & > p {
+      margin-block-end: calc(var(--size-gap) * 4);
+      text-wrap: pretty;
+    }
+
+    & .signature {
+      font-family: var(--font-caveat);
+      font-size: 1.3em;
+      text-align: right;
+    }
+
+    & .flower {
+      position: absolute;
+      opacity: 0.25;
+    }
+  }
+}

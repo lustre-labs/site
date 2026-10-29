@@ -1,4 +1,6 @@
-import ewe
+// IMPORTS ---------------------------------------------------------------------
+
+import ewe.{type Body, type Connection, type SocketAddress}
 import filepath
 import gleam/bytes_tree
 import gleam/erlang/process
@@ -6,16 +8,18 @@ import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import gleam/option.{None}
 import gleam/otp/static_supervisor
-import gleam/otp/supervision
+import gleam/otp/supervision.{type ChildSpecification}
 import marceau
 import simplifile
 import site/build
+
+// MAIN ------------------------------------------------------------------------
 
 /// Preview first builds the final page, then serves it from `dist/` using a
 /// local file server.
 ///
 /// This can be used to test the built artefacts before deployment.
-pub fn main() {
+pub fn main() -> Nil {
   build.main()
 
   let assert Ok(_) =
@@ -26,26 +30,26 @@ pub fn main() {
   process.sleep_forever()
 }
 
-fn serve_site() -> supervision.ChildSpecification(static_supervisor.Supervisor) {
-  let listener = process.new_name("listener")
-  let pool = process.new_name("connection-pool")
-
-  ewe.new(listener, pool, fn(request: Request(_)) -> Response(_) {
+fn serve_site() -> ChildSpecification(SocketAddress) {
+  let server = {
+    use request <- ewe.new
     use <- serve_dist(request)
 
     response.set_body(
       response.new(404),
       ewe.Bytes(bytes_tree.from_string("not found")),
     )
-  })
+  }
+
+  server
   |> ewe.listening(1235)
   |> ewe.supervised
 }
 
 fn serve_dist(
-  request: Request(ewe.Connection),
-  next: fn() -> Response(ewe.Body),
-) -> Response(ewe.Body) {
+  request: Request(Connection),
+  next: fn() -> Response(Body),
+) -> Response(Body) {
   let path = filepath.join("dist", request.path)
 
   use <- serve_file(request, path)
@@ -55,10 +59,10 @@ fn serve_dist(
 }
 
 fn serve_file(
-  request: Request(ewe.Connection),
+  request: Request(Connection),
   path: String,
-  next: fn() -> Response(ewe.Body),
-) -> Response(ewe.Body) {
+  next: fn() -> Response(Body),
+) -> Response(Body) {
   case simplifile.is_file(path) {
     Ok(False) | Error(_) -> next()
     Ok(True) -> {

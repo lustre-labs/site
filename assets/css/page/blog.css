@@ -1,0 +1,43 @@
+.layout.section {
+  max-width: var(--content-container-width);
+  margin-inline: auto;
+  margin-block-start: calc(var(--size-gap) * 8);
+  margin-block-end: round(18vh, var(--size-gap));
+  padding-inline: var(--content-container-padding);
+
+  & > ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(35ch, 1fr));
+    gap: calc(var(--size-gap) * 8);
+
+    li {
+      aspect-ratio: 16 / 9;
+    }
+
+    li:not(.stamp) {
+      padding: round(clamp(8px, 2vw, 16px), var(--size-gap));
+    }
+
+    li > a {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      height: 100%;
+    }
+
+    li .date {
+      font-size: calc(var(--size-text) * 0.8);
+    }
+
+    li p {
+      margin-top: calc(var(--size-gap) * 2);
+    }
+
+    li .authors {
+      align-self: flex-end;
+      font-family: var(--font-caveat);
+      font-size: 1.2em;
+    }
+  }
+}

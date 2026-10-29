@@ -1,37 +1,56 @@
 .snippet {
   & pre {
-    overflow-x: auto;
-    min-width: 0;
-    padding-block-end: 1lh;
-    margin-block-end: -1lh;
-  }
-
-  & pre code {
     color: var(--syntax-text);
   }
 
-  & pre code :is(.hl-comment) {
+  & pre :is(.hl-comment) {
     color: var(--syntax-comment-text);
     font-style: italic;
   }
 
-  & pre code .hl-function {
+  & pre .hl-function {
     color: var(--syntax-function-text);
   }
 
-  & pre code :is(.hl-keyword, .hl-operator) {
+  & pre :is(.hl-keyword, .hl-operator) {
     color: var(--syntax-builtin-text);
   }
 
-  & pre code :is(.hl-string, .hl-number) {
+  & pre :is(.hl-string, .hl-number) {
     color: var(--syntax-literal-text);
   }
 
-  & pre code .hl-variant {
+  & pre .hl-variant {
     color: var(--syntax-variant-text);
   }
 
-  & pre code .hl-module {
+  & pre .hl-module {
     color: var(--syntax-module-text);
+  }
+
+  & pre .diagnostic-bold {
+    font-weight: bold;
+  }
+
+  & pre .diagnostic-red-bold {
+    font-weight: bold;
+    color: var(--syntax-error-text);
+  }
+
+  & pre .diagnostic-yellow-bold {
+    font-weight: bold;
+    color: #ffd596;
+  }
+
+  & pre .diagnostic-cyan {
+    color: var(--syntax-comment-text);
+  }
+
+  & pre .diagnostic-red {
+    color: var(--syntax-error-text);
+  }
+
+  & pre .diagnostic-yellow {
+    color: var(--syntax-comment-text);
   }
 }

@@ -5,10 +5,10 @@ import gleam/dict.{type Dict}
 import gleam/io
 import gleam/list
 import gleam/result
-import simplifile
+import simplifile.{type FileError}
 import site/document.{type Document}
 import site/page
-import site/route
+import site/route.{type Route}
 
 // MAIN ------------------------------------------------------------------------
 
@@ -23,16 +23,16 @@ pub fn main() -> Nil {
   let assert Ok(_) = simplifile.delete_all(["dist"])
   let assert Ok(_) = simplifile.create_directory_all("dist")
 
-  list.each([route.Index, ..routes], build_route(_, documents))
+  list.each(list.append(route.static_routes, routes), build_route(_, documents))
   list.each(assets, copy_asset)
 
   io.println("Built site in dist/")
 }
 
 fn build_route(
-  route: route.Route,
+  route: Route,
   documents: Dict(String, Document),
-) -> Result(Nil, simplifile.FileError) {
+) -> Result(Nil, FileError) {
   let meta = route.to_meta(route, documents)
   let content = route.to_content(route, documents)
   let html = page.to_html(meta, [], content)
@@ -43,7 +43,7 @@ fn build_route(
   let assert Ok(_) = simplifile.write(path, html)
 }
 
-fn copy_asset(asset: String) -> Result(Nil, simplifile.FileError) {
+fn copy_asset(asset: String) -> Result(Nil, FileError) {
   let assert "assets/" <> name = asset
   let path = filepath.join("dist", name)
 

@@ -26,6 +26,7 @@ pub const meta =
     content: [
       "index#highlights",
       "index#snippet",
+      "index#letter",
     ],
   )
 
@@ -34,11 +35,12 @@ pub const meta =
 pub fn view(documents: Dict(String, Document)) -> Element(_) {
   page.view_empty_layout([
     view_hero(),
-    view_stats(),
     page.view_navbar(),
-    view_divider(),
     view_highlights(documents),
+    view_stats(),
     view_snippet(documents),
+    view_divider(),
+    view_letter(documents),
     view_divider(),
     view_component_links(),
   ])
@@ -92,8 +94,8 @@ fn view_hero_flowers() -> Element(_) {
 fn view_hero_title() -> Element(_) {
   html.h1([attribute.class("title")], [
     html.text("Frontend can still be "),
-    html.span([attribute.class("highlight")], [html.text("joyful.")]),
-    // html.text("."),
+    html.span([attribute.class("highlight")], [html.text("joyful")]),
+    html.text("."),
   ])
 }
 
@@ -124,8 +126,12 @@ fn view_hero_subtitle() -> Element(_) {
 
 fn view_hero_cta() -> Element(message) {
   html.div([attribute.class("cta")], [
-    html.button(
-      [attribute.class("transition-enter"), attribute.style("--offset", "5")],
+    html.a(
+      [
+        attribute.class("transition-enter"),
+        attribute.style("--offset", "5"),
+        attribute.href("https://lustre.hexdocs.pm/guide/01-quickstart.html"),
+      ],
       [
         html.text("Get started"),
         icon.book_text([]),
@@ -145,10 +151,10 @@ fn view_hero_cta() -> Element(message) {
 // STATS -----------------------------------------------------------------------
 
 fn view_stats() -> Element(_) {
-  html.section([attribute.id("page-stats")], [
+  html.section([attribute.class("layout section"), attribute.id("stats")], [
     html.ul([], [
-      view_stat("280k+", "downloads"),
-      view_stat("2.4k", "GitHub stars"),
+      view_stat("330k+", "downloads"),
+      view_stat("2.5k", "GitHub stars"),
       view_stat("16kB", "gzipped"),
       view_stat("90", "releases"),
     ]),
@@ -165,7 +171,7 @@ fn view_stat(value: String, label: String) -> Element(_) {
 // COMPONENT LINKS -------------------------------------------------------------
 
 fn view_component_links() -> Element(_) {
-  html.section([attribute.id("page-components-links")], [
+  html.section([attribute.class("layout section"), attribute.id("links")], [
     actions.view([], [
       actions.view_action(
         "Why Web Components?",
@@ -188,7 +194,7 @@ fn view_highlights(documents: Dict(String, Document)) -> Element(_) {
     as "missing content for highlights section"
 
   html.section(
-    [attribute.id("page-highlights")],
+    [attribute.class("layout section"), attribute.id("highlights")],
     list.map(document.content.content, djot.block),
   )
 }
@@ -199,9 +205,25 @@ fn view_snippet(documents: Dict(String, Document)) -> Element(_) {
   let assert Ok(document) = dict.get(documents, "index#snippet")
     as "missing content for snippet section"
 
-  html.div([attribute.style("padding-inline", "calc(var(--size-gap) * 2)")], [
-    html.section(
-      [attribute.id("page-snippet")],
+  html.section(
+    [
+      attribute.class("layout section"),
+      attribute.id("snippet"),
+      attribute.data("mode", "dark"),
+    ],
+    list.map(document.content.content, djot.block),
+  )
+}
+
+// LETTER ----------------------------------------------------------------------
+
+fn view_letter(documents: Dict(String, Document)) -> Element(_) {
+  let assert Ok(document) = dict.get(documents, "index#letter")
+    as "missing content for letter section"
+
+  html.section([attribute.class("layout article"), attribute.id("letter")], [
+    html.div(
+      [attribute.class("inner")],
       list.map(document.content.content, djot.block),
     ),
   ])

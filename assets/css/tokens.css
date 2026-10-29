@@ -56,7 +56,7 @@
   --colour-grey-950: #110f0e;
 
   --font-neuton: "Neuton", Georgia, serif;
-  --font-space-grotesk: "Space Grotesk", system-ui, sans-serif;
+  --font-space-grotesk: "Work Sans", system-ui, sans-serif;
   --font-space-mono: "Space Mono", monospace;
   --font-caveat: "Caveat", cursive;
 
@@ -91,12 +91,12 @@
 
   --surface-primary-background: light-dark(white, var(--colour-grey-950));
   --surface-primary-text: light-dark(
-    var(--colour-blue-950),
+    var(--colour-gray-800),
     var(--colour-blue-100)
   );
   --surface-secondary-background: light-dark(
     var(--colour-grey-050),
-    var(--colour-grey-900)
+    var(--colour-grey-950)
   );
   --surface-secondary-text: light-dark(
     var(--colour-grey-600),
@@ -150,6 +150,7 @@
     var(--colour-grey-950),
     var(--colour-grey-100)
   );
+  --syntax-error-text: light-dark(var(--colour-red-600), var(--colour-red-400));
 
   --content-container-padding: max(4vw, round(2vw, var(--size-gap)));
   --content-container-width: min(

@@ -40,6 +40,7 @@ p {
 
 pre {
   overflow-x: auto;
+  overscroll-behavior-inline: none;
   line-height: round(var(--size-text) * 1.4, var(--size-gap));
 }
 

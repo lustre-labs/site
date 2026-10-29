@@ -1,20 +1,18 @@
-#layout-navbar,
-#page-stats,
-#page-components-links,
-#page-highlights,
-#page-snippet {
-  margin-block: round(10vh, var(--size-gap));
+.layout:is(.navbar, .section),
+.divider {
+  margin-block: round(12vh, var(--size-gap));
 }
 
-#page-stats,
-#page-components-links,
-#page-highlights,
-#page-snippet {
+#stats,
+#links,
+#highlights,
+#snippet,
+#letter {
   max-width: var(--content-container-width);
   margin-inline: auto;
 }
 
-#page-stats {
+#stats {
   & ul {
     margin-inline: auto;
     display: grid;
@@ -74,7 +72,7 @@
   }
 }
 
-#page-highlights {
+#highlights {
   & ul {
     padding-inline: var(--content-container-padding);
     isolation: isolate;
@@ -97,7 +95,6 @@
     display: inline-block;
     font-family: var(--font-neuton);
     font-size: calc(var(--size-text) * 1.45);
-    color: var(--surface-primary-text);
     margin-block-end: calc(var(--size-gap) * 3);
   }
 
@@ -121,24 +118,59 @@
   }
 }
 
-#page-snippet {
+#snippet {
   padding-inline: var(--content-container-padding);
-  padding-block: var(--content-container-padding);
-  border: 2px dashed var(--surface-auxiliary-border);
+
+  & > h2 {
+    margin-block-end: calc(var(--size-gap) * 2);
+  }
+
+  & > p {
+    margin-block-end: calc(var(--size-gap) * 8);
+  }
+
+  & > .snippet {
+    background: var(--surface-secondary-background);
+    border-radius: var(--size-radius);
+    padding: calc(var(--size-gap) * 4);
+  }
+}
+
+#letter {
+  position: relative;
   border-radius: var(--size-radius);
   background: var(--surface-secondary-background);
 
-  & > * + * {
-    margin-block-start: calc(var(--size-gap) * 4);
+  --radius: clamp(8px, 2vw, 16px);
+  padding: var(--radius);
+  mask:
+    radial-gradient(50% 50%, #0000 65%, #fff 67%) round var(--radius)
+      var(--radius) / calc(2 * var(--radius)) calc(2 * var(--radius)),
+    conic-gradient(#000 0 0) content-box;
+  transform: rotate(-1deg);
+
+  & .flower {
+    position: absolute;
+    opacity: 0.25;
   }
 
-  & h2 {
-    color: var(--surface-primary-text);
-  }
+  .inner {
+    padding: calc(var(--content-container-padding) - var(--radius));
+    position: relative;
 
-  & p {
-    color: var(--surface-secondary-text);
-    margin-inline: auto;
-    text-wrap: pretty;
+    & > :is(h2, h3, h4, h5, h6) {
+      margin-block-end: calc(var(--size-gap) * 8);
+    }
+
+    & > p {
+      margin-block-end: calc(var(--size-gap) * 4);
+      text-wrap: pretty;
+    }
+
+    & .signature {
+      font-family: var(--font-caveat);
+      font-size: 1.3em;
+      text-align: right;
+    }
   }
 }

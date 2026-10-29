@@ -33,7 +33,7 @@
     font-family: var(--font-neuton);
     font-size: clamp(
       calc(var(--size-text) * 4),
-      6vw,
+      8vw,
       calc(var(--size-text) * 8)
     );
     line-height: 1.1;
